@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Menu</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f9f9f9;
+      margin: 0;
+    }
+    .menu-container {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+    }
+    .menu-item {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin: 15px;
+      padding: 15px;
+      width: 280px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .menu-item img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .menu-item h3 {
+      margin: 10px 0 5px;
+    }
+    .menu-item p {
+      margin: 5px 0;
+    }
+    button {
+      padding: 10px 15px;
+      background: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .top-nav {
+      padding: 15px;
+      background: #007BFF;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+    }
+    .top-nav a {
+      color: white;
+      margin-left: 10px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-nav">
+    <div><strong>QuickEats Menu</strong></div>
+    <div>
+      <a href="cart.html">Cart</a>
+      <a href="profile.html">Profile</a>
+    </div>
+  </div>
+  
+  <!-- Menu Items will be inserted here -->
+  <div class="menu-container" id="menu-container"></div>
+
+  <script>
+    const menuData = [
+      {
+        id: 1,
+        item_name: "Butter Chicken",
+        price: 350,
+        restaurant_name: "Spicy Delights",
+        image_url: "/images/panner.jpg"
+      },
+      {
+        id: 2,
+        item_name: "Paneer Tikka",
+        price: 250,
+        restaurant_name: "Tandoori Feast",
+        image_url: "/images/paneer.jpg"
+      },
+      {
+        id: 3,
+        item_name: "Masala Dosa",
+        price: 120,
+        restaurant_name: "South Spice",
+        image_url: "/images/MasalDose.jpg"
+      },
+      {
+        id: 4,
+        item_name: "Biryani",
+        price: 400,
+        restaurant_name: "Biryani Hub",
+        image_url: "/images/biryani.jpg"
+      },
+      {
+        id: 5,
+        item_name: "Aloo Paratha",
+        price: 150,
+        restaurant_name: "North Indian Kitchen",
+        image_url: "/images/paratha.jpg"
+      },
+      {
+        id: 6,
+        item_name: "Chole Bhature",
+        price: 200,
+        restaurant_name: "Chole Bhature Junction",
+        image_url: "/images/cholebhature.jpg"
+      },
+      {
+        id: 7,
+        item_name: "Samosa",
+        price: 50,
+        restaurant_name: "Snacks Corner",
+        image_url: "/images/samosa.jpg"
+      },
+      {
+        id: 8,
+        item_name: "Pani Puri",
+        price: 80,
+        restaurant_name: "Street Food Express",
+        image_url: "/images/panipuri.jpg"
+      }
+    ];
+
+    const container = document.getElementById('menu-container');
+    const rendered = new Set();
+
+    menuData.forEach(item => {
+      if (rendered.has(item.id)) return;
+      rendered.add(item.id);
+
+      const div = document.createElement('div');
+      div.className = 'menu-item';
+      div.innerHTML = `
+        <img src="${item.image_url}" alt="${item.item_name}" />
+        <h3>${item.item_name}</h3>
+        <p>₹${item.price}</p>
+        <p><strong>Restaurant:</strong> ${item.restaurant_name}</p>
+        <button onclick="addToCart(${item.id})">Add to Cart</button>
+      `;
+      container.appendChild(div);
+    });
+
+    function addToCart(itemId) {
+      const item = menuData.find(item => item.id === itemId);
+      if (!item) return;
+
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+      const existingItem = cart.find(cartItem => cartItem.id === item.id);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          id: item.id,
+          item_name: item.item_name,
+          price: item.price,
+          quantity: 1
+        });
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert(`${item.item_name} added to cart!`);
+    }
+  </script>
+</body>
+</html>

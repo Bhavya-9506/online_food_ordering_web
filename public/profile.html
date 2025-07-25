@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 40px;
+      margin: 0;
+    }
+    .profile-container {
+      background-color: white;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .logout-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .logout-btn:hover {
+      background-color: #c82333;
+    }
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      font-size: 16px;
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="profile-container">
+    <h1>Your Profile</h1>
+    <p><strong>Name:</strong> <span id="name">Loading...</span></p>
+    <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+    <p><strong>Address:</strong> <span id="address">Loading...</span></p>
+    <p><strong>Time spent on this page:</strong> <span id="time-spent">0</span> seconds</p>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+    <br>
+    <a href="review.html">Write a Review</a>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+      window.location.href = 'login.html';
+    } else {
+      fetch(`/api/user/${userId}`)  // ✅ Adjusted endpoint (must match backend)
+        .then(res => res.json())
+        .then(user => {
+          if (user && user.name) {
+            document.getElementById('name').textContent = user.name;
+            document.getElementById('email').textContent = user.email;
+            document.getElementById('address').textContent = user.address;
+          } else {
+            alert("User not found or error retrieving user data.");
+            window.location.href = 'login.html';
+          }
+        })
+        .catch(err => {
+          console.error('Error fetching user profile:', err);
+          alert("Failed to load profile. Please log in again.");
+          window.location.href = 'login.html';
+        });
+    }
+
+    // Time tracking
+    const startTime = Date.now();
+    setInterval(() => {
+      const secondsSpent = Math.floor((Date.now() - startTime) / 1000);
+      document.getElementById('time-spent').textContent = secondsSpent;
+    }, 1000);
+
+    function logout() {
+      localStorage.removeItem('userId');
+      window.location.href = 'index.html';
+    }
+  </script>
+
+</body>
+</html>

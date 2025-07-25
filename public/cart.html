@@ -1,0 +1,49 @@
+<h2>Your Cart</h2>
+<ul id="cart-list"></ul>
+<h3 id="total-price"></h3>
+<button onclick="placeOrder()">Place Order</button>
+
+<script>
+function loadCart() {
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const list = document.getElementById('cart-list');
+  list.innerHTML = '';
+  let total = 0;
+
+  cart.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = `${item.item_name} - ₹${item.price.toFixed(2)}`;
+    list.appendChild(li);
+    total += item.price;
+  });
+
+  document.getElementById('total-price').textContent = `Total: ₹${total.toFixed(2)}`;
+}
+
+async function placeOrder() {
+  const userId = localStorage.getItem('userId');
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  const response = await fetch('/api/orders/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId,
+      items: cart,
+      totalPrice: cart.reduce((sum, item) => sum + item.price, 0),
+      paymentMethod: 'Cash on Delivery' // default since no payment page
+    })
+  });
+
+  const result = await response.json();
+  if (result.success) {
+    alert('Order placed successfully!');
+    localStorage.removeItem('cart');
+    location.reload();
+  } else {
+    alert('Failed to place order.');
+  }
+}
+
+loadCart();
+</script>

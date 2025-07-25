@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+</head>
+<body>
+  <h1>Login or Sign Up</h1>
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="Email" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <input type="text" id="name" placeholder="Your Name (for new users)" /><br>
+    <input type="text" id="address" placeholder="Address (optional)" /><br>
+    <button type="submit">Login</button>
+  </form>
+
+  <script>
+    document.getElementById('loginForm').onsubmit = async function (e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const name = document.getElementById('name').value;
+      const address = document.getElementById('address').value;
+
+      const res = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name, address })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('userId', data.userId);
+        window.location.href = 'menu.html';
+      } else {
+        alert(data.message);
+      }
+    };
+  </script>
+</body>
+</html>
